@@ -62,6 +62,7 @@ jobs:
       - name: Patch Enmity IPA
         if: steps.compare.outputs.result==1 || github.event_name=='push'
         run: |
+          cd ${{ github.workspace }}
           mkdir dist
 
           for Fonts in $(ls Fonts); do
