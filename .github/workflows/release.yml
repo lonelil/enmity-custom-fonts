@@ -57,7 +57,7 @@ jobs:
         if: steps.compare.outputs.result==1 || github.event_name=='push'
         run: |
           for Fonts in $(ls Fonts); do
-            rename 's/^/whitney-/' *
+            for f in * ; do mv -- "$f" "whitney-$f" ; done
           done
       - name: Patch Enmity IPA
         if: steps.compare.outputs.result==1 || github.event_name=='push'
