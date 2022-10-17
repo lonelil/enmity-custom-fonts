@@ -4,9 +4,9 @@ name: "release"
 on:
   push:
     paths:
-      - 'Packs/**'
+      - "Packs/**"
   schedule:
-    - cron: '0 0 * * *'  # every day at midnight
+    - cron: "0 0 * * *" # every day at midnight
   workflow_dispatch:
 
 jobs:
@@ -51,6 +51,12 @@ jobs:
       - name: Download Enmity IPA
         if: steps.compare.outputs.result==1 || github.event_name=='push'
         run: wget ${{ steps.download.outputs.url }}
+      - name: Change Font Name
+        if: steps.compare.outputs.result==1 || github.event_name=='push'
+        run: |
+          for Fonts in $(ls Fonts); do
+            rename 's/^/whitney-/' *
+          done
       - name: Patch Enmity IPA
         if: steps.compare.outputs.result==1 || github.event_name=='push'
         run: sh patch.sh
