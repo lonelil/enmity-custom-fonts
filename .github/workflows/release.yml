@@ -5,6 +5,8 @@ on:
   push:
     paths:
       - "Packs/**"
+      - "Fonts/**"
+      - ".github/workflows/release.yml"
   schedule:
     - cron: "0 0 * * *" # every day at midnight
   workflow_dispatch:
