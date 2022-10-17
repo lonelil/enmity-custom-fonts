@@ -1,11 +1,11 @@
 
 <div align="center">
 
-### Enmity, but with custom icons
-<a href="https://github.com/devicarus/enmity-custom-icons/releases"><img src="https://img.shields.io/github/v/release/devicarus/enmity-custom-icons?label=download&style=for-the-badge"></a>
+### Enmity, but with custom fonts
+<a href="https://github.com/lonelil/enmity-custom-fonts/releases"><img src="https://img.shields.io/github/v/release/lonelil/enmity-custom-fonts?label=download&style=for-the-badge"></a>
 
 <br>
-
+> Please note that this is a fork of Enmity Custom Icons, without them this would not be possible. Please consider supporting the original creator [devicarus](https://github.com/devicarus)
 > This repository is automatically keeping the releases up to date with [enmity-mod/tweak](https://github.com/enmity-mod/tweak)
 </div>
 <br>
@@ -22,6 +22,4 @@
 
 
 ### Credits
-Icons by: [Icons8](https://icons8.com/icons/plumpy)<br>
-Modified for Enmity: flower#1116
-
+[Enmity Custom Icons!](https://github.com/devicarus/enmity-custom-icons)
