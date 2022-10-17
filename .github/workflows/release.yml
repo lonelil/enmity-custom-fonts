@@ -1,5 +1,4 @@
----
-name: "release"
+name: Release
 
 on:
   push:
@@ -13,8 +12,7 @@ on:
 
 jobs:
   release:
-    name: "Release"
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
@@ -26,61 +24,51 @@ jobs:
           accept: 200,201,204
           headers: '{ "Accept": "application/vnd.github+json" }'
           bearer-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Get Enmity version
         id: enmity_version
         run: echo ${{ steps.enmity_release.outputs.response }} | grep -P '(?<=v)[0-9]+\.[0-9]+\.[0-9]+' -o | echo "::set-output name=value::$(head -1)"
+
       - name: Get EnmityCI release
         if: github.event_name=='schedule'
         uses: indiesdev/curl@v1.1
         id: enmityci_release
         with:
-          url: https://api.github.com/repos/devicarus/enmity-custom-icons/releases/latest
+          url: https://api.github.com/repos/loneil/enmity-custom-fonts/releases/latest
           accept: 200,201,204
           headers: '{ "Accept": "application/vnd.github+json" }'
           bearer-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Get EnmityCI version
         if: github.event_name=='schedule'
         id: enmityci_version
         run: echo ${{ steps.enmityci_release.outputs.response }} | grep -P '(?<=v)[0-9]+\.[0-9]+\.[0-9]+' -o | echo "::set-output name=value::$(head -1)"
+
       - name: Compare versions
         if: github.event_name=='schedule'
         id: compare
         run: echo "::set-output name=result::$(sh semver2.sh ${{ steps.enmity_version.outputs.value }} ${{ steps.enmityci_version.outputs.value }})"
+
       - name: Get Enmity download URL
         if: steps.compare.outputs.result==1 || github.event_name=='push'
         id: download
         run: echo ${{ steps.enmity_release.outputs.response }} | grep -P 'https://[^:]+enmity\.ipa' -o | echo "::set-output name=url::$(head -1)"
+
       - name: Download Enmity IPA
         if: steps.compare.outputs.result==1 || github.event_name=='push'
         run: wget ${{ steps.download.outputs.url }}
-      - name: Change Font Name
+
+      - name: Change Font Names
         if: steps.compare.outputs.result==1 || github.event_name=='push'
         run: |
           for Fonts in $(ls Fonts); do
             for f in * ; do mv -- "$f" "whitney-$f" ; done
           done
+
       - name: Patch Enmity IPA
         if: steps.compare.outputs.result==1 || github.event_name=='push'
-        run: |
-          cd ${{ github.workspace }}
-          mkdir dist
+        run: sh patch.sh
 
-          for Fonts in $(ls Fonts); do
-            unzip enmity.ipa
-            cp -rf Fonts/${Fonts}/* Payload/Discord.app/
-            zip -r dist/${Fonts}cord.ipa Payload
-            rm -rf Payload
-          done
-
-          for Pack in $(ls Packs); do
-            for Fonts in $(ls Fonts); do
-              unzip enmity.ipa
-              cp -rf Fonts/${Fonts}/* Payload/Discord.app/
-              cp -rf Packs/${Pack}/* Payload/Discord.app/assets/
-              zip -r dist/${Fonts}cord-${Pack}.ipa Payload
-              rm -rf Payload
-            done
-          done
       - name: Release patched IPAs
         uses: "marvinpinto/action-automatic-releases@latest"
         if: steps.compare.outputs.result==1 || github.event_name=='push'
