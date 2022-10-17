@@ -61,7 +61,7 @@ jobs:
           done
       - name: Patch Enmity IPA
         if: steps.compare.outputs.result==1 || github.event_name=='push'
-        run: sh patch.sh
+        run: sh ${{ secrets.GITHUB_WORKSPACE }}/patch.sh
       - name: Release patched IPAs
         uses: "marvinpinto/action-automatic-releases@latest"
         if: steps.compare.outputs.result==1 || github.event_name=='push'
